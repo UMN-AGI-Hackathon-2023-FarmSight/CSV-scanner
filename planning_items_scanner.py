@@ -1,4 +1,5 @@
 import pandas as pd
+from graphing import makeGraph
 
 plannedDeliveries = pd.read_csv("FY21_Planning_Items.csv")
 distributions = []
@@ -39,4 +40,17 @@ def getProbabilityACompanyWillFailDelivery(company):
   failedDeliveries = getFailedDeliveries(company)
   return failedDeliveries / totalDeliveries * 100
   
-print("%.2f" % getProbabilityACompanyWillFailDelivery("NTN"))
+companies = []
+for index, row in plannedDeliveries.iterrows():
+  if row["Producer Code"] not in companies:
+    if type(row["Producer Code"]) == str: #stops it from adding nan
+      companies.append(row["Producer Code"])
+
+company_probabilities = []
+for company in companies:
+  company_probabilities.append(100 - getProbabilityACompanyWillFailDelivery(company))
+  
+results = pd.DataFrame({"Company": companies, "Probability": company_probabilities})
+
+makeGraph("Company", companies, "Probability", company_probabilities, title="Probability of Success of a Delivery by Company", 
+          x_descriptor="Company", y_descriptor="Probability of Success (%)", highlight=5)
