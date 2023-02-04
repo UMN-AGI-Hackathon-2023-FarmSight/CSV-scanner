@@ -1,5 +1,6 @@
 import pandas as pd
 from graphing import makeGraph
+import sys
 
 plannedDeliveries = pd.read_csv("FY21_Planning_Items.csv")
 distributions = []
@@ -52,5 +53,15 @@ for company in companies:
   
 results = pd.DataFrame({"Company": companies, "Probability": company_probabilities})
 
-makeGraph("Company", companies, "Probability", company_probabilities, title="Probability of Success of a Delivery by Company", 
-          x_descriptor="Company", y_descriptor="Probability of Success (%)", highlight=5)
+
+if sys.argv[1] == "graph" or sys.argv[1] == "g": #if the user wants to see the graph
+  makeGraph("Company", companies, "Probability", company_probabilities, title="Probability of Success of a Delivery by Company", 
+      x_descriptor="Company", y_descriptor="Probability of Success (%)")
+elif sys.argv[1] == "highlighted graph" or sys.argv[1] == "hg": #if the user wants to see the graph with a highlighted company
+    makeGraph("Company", companies, "Probability", company_probabilities, title="Probability of Success of a Delivery by Company", 
+        x_descriptor="Company", y_descriptor="Probability of Success (%)", highlight=sys.argv[1])
+elif sys.argv[1] == "probability" or sys.argv[1] == "p":
+    print(str(getProbabilityACompanyWillFailDelivery(sys.argv[2])) + "%")
+else:
+  pass
+
